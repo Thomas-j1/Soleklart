@@ -1,19 +1,16 @@
 package com.example.himmeltitting
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.widget.SearchView
-import android.widget.TextView
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.himmeltitting.databinding.ActivityMapsBinding
-import com.example.himmeltitting.locationforecast.CompactTimeSeriesData
-import com.example.himmeltitting.nilu.LuftKvalitet
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
@@ -30,7 +27,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private lateinit var lastLocation: Location
     private lateinit var currentLatLng: LatLng
     private var marker: Marker? = null
-    private val viewModel: MapsActivityViewModel by viewModels()
 
     //fused location privider er en api som brukes til å få siste kjente lokasjon.
     // Den er vist veldig bra å bruke, står mer om det her https://developer.android.com/training/location/retrieve-current
@@ -97,7 +93,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 currentLatLng = LatLng(location.latitude, location.longitude)
 
                 // egendefinert metode
-                placeMarkerOnMap(currentLatLng)
+                //placeMarkerOnMap(currentLatLng)
 
                 // zoom effekt som skjer når lokasjon blir funnet
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
@@ -113,9 +109,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         markerOptions.title("$currentLatLong")
         marker = mMap.addMarker(markerOptions)
         marker?.showInfoWindow()
-        viewData()
+        showData()
     }
 
+    private fun showData() {
+        val intent = Intent(this, ShowDataActivity::class.java).apply {
+            putExtra("Lat", currentLatLng.latitude)
+            putExtra("Lon", currentLatLng.longitude)
+        }
+        startActivity(intent)
+    }
 
 
     override fun onMarkerClick(p0: Marker)= false
@@ -181,60 +184,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         })
     }
 
-    //
-    private fun viewData() {
-        //gjor om til data class
-        viewModel.getCompactForecast(currentLatLng.latitude, currentLatLng.longitude).observe(this) {
-            setForecastText(binding.text, it)
-        }
-    }
 
-    private fun setForecastText(textView: TextView, data: CompactTimeSeriesData?) {
-        if (data == null){
-            textView.text = "Kunne ikke hente data"
-            return
-        }
-        val luftKvalitet = getLuftkvalitet()
-        val sunsetTime = getSunrise()
-        val outText = "Nå (${data.time}):\n" +
-                "Temperatur: ${data.temperature}, Skydekke: ${data.cloudCover}, Vindhastighet: ${data.wind_speed}\n" +
-                "Precipation neste 6 timene: ${data.precipitation6Hours}\n" +
-                "SymbolSummary neste 12 timer: ${data.summary12Hour}\n" +
-                "Luftkvalitet: ${luftKvalitet}\n" +
-                "Solnedgang: $sunsetTime"
-
-        textView.text = outText
-    }
-
-    private fun getLuftkvalitet(): String{
-        viewModel.fetchNiluMedRadius(currentLatLng.latitude, currentLatLng.longitude, 20)
-        val liste = viewModel.getNilu()
-        var theOne: LuftKvalitet? = null
-        liste.observe(this){
-            //This is wrong, finner ikke nærmeste værstasjon :/
-            if (it.isNotEmpty()){
-                theOne = it.last()
-            }
-        }
-        if (theOne == null) {
-            return "Fant ikke luftkvalitet"
-        }
-        return theOne?.value.toString()
-    }
-
-    private fun getSunrise(): String {
-        var sunsetTime : String? = null
-        viewModel.getSunriseData(currentLatLng.latitude, currentLatLng.longitude).observe(this){
-            if (it != null) {
-                sunsetTime = it.sunsetTime
-
-            }
-        }
-        if (sunsetTime == null) {
-            return "Fant ikke solnedgang"
-        }
-        return sunsetTime as String
-    }
 }
 
 

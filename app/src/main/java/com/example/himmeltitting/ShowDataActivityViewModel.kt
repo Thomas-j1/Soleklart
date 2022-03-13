@@ -10,8 +10,7 @@ import com.example.himmeltitting.sunrise.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MapsActivityViewModel : ViewModel() {
-
+class ShowDataActivityViewModel : ViewModel() {
     private val sunriseDS = SunRiseDataSource()
     private val niluDS = NiluDataSource()
     private val locationforecastDS = LocationforecastDS()
@@ -105,5 +104,4 @@ class MapsActivityViewModel : ViewModel() {
             }
         }
     }
-
 }

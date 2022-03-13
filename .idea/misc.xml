@@ -5,7 +5,8 @@
       <map>
         <entry key="app/src/main/res/layout/activity_location_tmp.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.18840579710144928" />
-        <entry key="app/src/main/res/layout/activity_maps.xml" value="0.18840579710144928" />
+        <entry key="app/src/main/res/layout/activity_maps.xml" value="0.21782932005066805" />
+        <entry key="app/src/main/res/layout/activity_show_data.xml" value="0.20052083333333334" />
       </map>
     </option>
   </component>
