@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import com.example.himmeltitting.databinding.ActivityMapsBinding
 import com.example.himmeltitting.locationforecast.CompactTimeSeriesData
 import com.example.himmeltitting.nilu.LuftKvalitet
+import com.example.himmeltitting.sunrise.CompactSunriseData
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
@@ -184,20 +185,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     //
     private fun viewData() {
-        //gjor om til data class
-        viewModel.getCompactForecast(currentLatLng.latitude, currentLatLng.longitude).observe(this) {
-            setForecastText(binding.text, it)
+        viewModel.getNilu(currentLatLng.latitude, currentLatLng.longitude, 20).observe(this@MapsActivity){ luftKvalitet ->
+            val luftK = getLuftkvalitet(luftKvalitet)
+            viewModel.getSunriseData(currentLatLng.latitude, currentLatLng.longitude).observe(this@MapsActivity){ sun ->
+                val sun = getSunrise(sun)
+
+                viewModel.getCompactForecast(currentLatLng.latitude, currentLatLng.longitude).observe(this@MapsActivity) { locationForecast ->
+                    setForecastText(binding.text, locationForecast, luftK, sun)
+                }
+                binding.text.visibility = View.VISIBLE
+            }
         }
-        binding.text.visibility = View.VISIBLE
     }
 
-    private fun setForecastText(textView: TextView, data: CompactTimeSeriesData?) {
+    private fun setForecastText(textView: TextView, data: CompactTimeSeriesData?, luftKvalitet: String, sunsetTime: String) {
         if (data == null){
             textView.text = "Kunne ikke hente data"
             return
         }
-        val luftKvalitet = getLuftkvalitet()
-        val sunsetTime = getSunrise()
         val outText = "Nå (${data.time}):\n" +
                 "Temperatur: ${data.temperature}, Skydekke: ${data.cloudCover}, Vindhastighet: ${data.wind_speed}\n" +
                 "Precipation neste 6 timene: ${data.precipitation6Hours}\n" +
@@ -208,24 +213,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         textView.text = outText
     }
 
-    private fun getLuftkvalitet(): String{
-        viewModel.fetchNiluMedRadius(currentLatLng.latitude, currentLatLng.longitude, 20)
-        val liste = viewModel.getNilu()
+    private fun getLuftkvalitet(liste : List<LuftKvalitet>): String{
         val her = createLocation(currentLatLng.latitude, currentLatLng.longitude)
         var theOne: LuftKvalitet? = null
         var smallestDistance = 100000.0.toFloat()
-        liste.observe(this){ mliste ->
-            mliste.forEach {
-                val location = it.latitude?.let { it1 -> it.longitude?.let { it2 ->
-                    createLocation(it1,
-                        it2
-                    )
-                } }
-                val done = her.distanceTo(location)
-                if (done < smallestDistance) {
-                    smallestDistance = done
-                    theOne = it
-                }
+        liste.forEach {
+            val location = it.latitude?.let { it1 -> it.longitude?.let { it2 ->
+                createLocation(it1,
+                    it2
+                )
+            } }
+            val done = her.distanceTo(location)
+            if (done < smallestDistance) {
+                smallestDistance = done
+                theOne = it
             }
         }
         if (theOne == null) {
@@ -242,18 +243,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         return her
     }
 
-    private fun getSunrise(): String {
+    private fun getSunrise(data: CompactSunriseData): String {
         var sunsetTime : String? = null
-        viewModel.getSunriseData(currentLatLng.latitude, currentLatLng.longitude).observe(this){
-            if (it != null) {
-                sunsetTime = it.sunsetTime
-
-            }
+        if (data != null) {
+            sunsetTime = data.sunsetTime
         }
         if (sunsetTime == null) {
             return "Fant ikke solnedgang"
         }
-        return sunsetTime as String
+        return sunsetTime
     }
 }
 

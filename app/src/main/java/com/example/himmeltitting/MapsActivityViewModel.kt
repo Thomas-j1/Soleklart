@@ -50,7 +50,8 @@ class MapsActivityViewModel : ViewModel() {
     //Nilu
     private val nilu = MutableLiveData<List<LuftKvalitet>>()
 
-    fun getNilu(): LiveData<List<LuftKvalitet>> {
+    fun getNilu(latitude: Double?, longitude: Double?, radius: Int): LiveData<List<LuftKvalitet>> {
+        fetchNiluMedRadius(latitude, longitude, radius)
         return nilu
     }
 
