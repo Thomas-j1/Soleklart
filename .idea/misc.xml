@@ -3,13 +3,30 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="app/src/main/res/layout/activity_location_tmp.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.18840579710144928" />
-        <entry key="app/src/main/res/layout/activity_maps.xml" value="0.21782932005066805" />
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/fav.xml" value="0.1655" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/search.xml" value="0.1655" />
+        <entry key="app/src/main/res/drawable/side_nav_bar.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_location_tmp.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_maps.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/content_main.xml" value="0.22708333333333333" />
+        <entry key="app/src/main/res/layout/fragment_favorites.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.11666666666666667" />
+        <entry key="app/src/main/res/layout/fragment_info.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_maps.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/nav_bar_layout.xml" value="0.11944444444444445" />
+        <entry key="app/src/main/res/layout/observation_element.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/result_row.xml" value="0.19895833333333332" />
+        <entry key="app/src/main/res/menu/activity_main_drawer.xml" value="0.17142857142857143" />
+        <entry key="app/src/main/res/menu/main_.xml" value="0.11574074074074074" />
+        <entry key="app/src/main/res/menu/nav_menu.xml" value="0.1" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_16_PREVIEW" project-jdk-name="16" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

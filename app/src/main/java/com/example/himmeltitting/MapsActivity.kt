@@ -1,20 +1,25 @@
 package com.example.himmeltitting
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
-import android.view.View
 import android.widget.SearchView
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.himmeltitting.databinding.ActivityMapsBinding
-import com.example.himmeltitting.locationforecast.CompactTimeSeriesData
-import com.example.himmeltitting.nilu.LuftKvalitet
+import com.example.himmeltitting.main_data_source.ObservationAdapter
+import com.example.himmeltitting.nav_fragments.FavoritesFragment
+import com.example.himmeltitting.nav_fragments.InfoFragment
+import com.example.himmeltitting.nav_fragments.SettingsFragment
+import com.example.himmeltitting.ui.MainActivityViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
@@ -31,13 +36,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private lateinit var lastLocation: Location
     private lateinit var currentLatLng: LatLng
     private var marker: Marker? = null
-    private val viewModel: MapsActivityViewModel by viewModels()
+    private val mainViewModel: MainActivityViewModel by viewModels()
+    private lateinit var recyclerView : RecyclerView
 
     //fused location privider er en api som brukes til å få siste kjente lokasjon.
     // Den er vist veldig bra å bruke, står mer om det her https://developer.android.com/training/location/retrieve-current
     private lateinit var fusedLocationClient : FusedLocationProviderClient
-
-    // variabler for koordinater
 
 
     // companion object som er litt som java sin statiske variabler (sa en dude på youtube)
@@ -61,6 +65,34 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         mapFragment.getMapAsync(this)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        val favoritesFrafment = FavoritesFragment()
+        val settingsFragment = SettingsFragment()
+        val infoFragment = InfoFragment()
+
+        binding.bottomNavigation.setOnItemReselectedListener { item ->
+            when(item.itemId){
+                R.id.search -> startMapsActivity()
+                R.id.fav -> makeCuurentFragment(favoritesFrafment)
+                R.id.info -> makeCuurentFragment(infoFragment)
+                R.id.settings -> makeCuurentFragment(settingsFragment)
+            }
+            true
+        }
+
+
+    }
+
+    private fun makeCuurentFragment(fragment: Fragment) =
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.fl_wrapper, fragment)
+
+            commit()
+        }
+
+    private fun startMapsActivity(){
+        val intent = Intent (this, MapsActivity::class.java )
+        startActivity(intent)
     }
 
 
@@ -68,6 +100,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap.uiSettings.isZoomControlsEnabled = true
+        initRecyclerView()
+        createData()
         mMap.setOnMarkerClickListener(this)
         setDefaultMapLocationNorway(mMap)
         setUpMap()
@@ -102,6 +136,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
                 // zoom effekt som skjer når lokasjon blir funnet
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+                mainViewModel.loadObservations(currentLatLng.latitude, currentLatLng.longitude, 10)
             }
         }
     }
@@ -114,9 +149,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         markerOptions.title("$currentLatLong")
         marker = mMap.addMarker(markerOptions)
         marker?.showInfoWindow()
-        viewData()
-    }
+        mainViewModel.loadObservations(currentLatLng.latitude, currentLatLng.longitude, 10)
 
+    }
 
 
     override fun onMarkerClick(p0: Marker)= false
@@ -182,79 +217,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         })
     }
 
-    //
-    private fun viewData() {
-        //gjor om til data class
-        viewModel.getCompactForecast(currentLatLng.latitude, currentLatLng.longitude).observe(this) {
-            setForecastText(binding.text, it)
-        }
-        binding.text.visibility = View.VISIBLE
+    private fun initRecyclerView(){
+        recyclerView = binding.recyclerView
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
     }
 
-    private fun setForecastText(textView: TextView, data: CompactTimeSeriesData?) {
-        if (data == null){
-            textView.text = "Kunne ikke hente data"
-            return
-        }
-        val luftKvalitet = getLuftkvalitet()
-        val sunsetTime = getSunrise()
-        val outText = "Nå (${data.time}):\n" +
-                "Temperatur: ${data.temperature}, Skydekke: ${data.cloudCover}, Vindhastighet: ${data.wind_speed}\n" +
-                "Precipation neste 6 timene: ${data.precipitation6Hours}\n" +
-                "SymbolSummary neste 12 timer: ${data.summary12Hour}\n" +
-                "Luftkvalitet: ${luftKvalitet}\n" +
-                "Solnedgang: $sunsetTime"
 
-        textView.text = outText
+    private fun createData(){
+        mainViewModel.getObservations().observe(this){ observationList ->
+            recyclerView.adapter = observationList?.let{ ObservationAdapter(this,it) }
+
+        }
     }
 
-    private fun getLuftkvalitet(): String{
-        viewModel.fetchNiluMedRadius(currentLatLng.latitude, currentLatLng.longitude, 20)
-        val liste = viewModel.getNilu()
-        val her = createLocation(currentLatLng.latitude, currentLatLng.longitude)
-        var theOne: LuftKvalitet? = null
-        var smallestDistance = 100000.0.toFloat()
-        liste.observe(this){ mliste ->
-            mliste.forEach {
-                val location = it.latitude?.let { it1 -> it.longitude?.let { it2 ->
-                    createLocation(it1,
-                        it2
-                    )
-                } }
-                val done = her.distanceTo(location)
-                if (done < smallestDistance) {
-                    smallestDistance = done
-                    theOne = it
-                }
-            }
-        }
-        if (theOne == null) {
-            return "Fant ikke luftkvalitet"
-        }
-        return theOne?.value.toString()
-    }
-
-    //Hjelpemetode for å lage et location object
-    private fun createLocation(latitude : Double, longitude : Double) : Location{
-        val her = Location("")
-        her.latitude = latitude
-        her.longitude = longitude
-        return her
-    }
-
-    private fun getSunrise(): String {
-        var sunsetTime : String? = null
-        viewModel.getSunriseData(currentLatLng.latitude, currentLatLng.longitude).observe(this){
-            if (it != null) {
-                sunsetTime = it.sunsetTime
-
-            }
-        }
-        if (sunsetTime == null) {
-            return "Fant ikke solnedgang"
-        }
-        return sunsetTime as String
-    }
 }
 
 

@@ -8,7 +8,7 @@ import com.google.gson.Gson
 class LocationforecastDS {
     private val gson = Gson()
 
-    suspend fun getAllForecastData(lat: Double, lon: Double): Locationforecast? {
+     suspend fun getAllForecastData(lat: Double, lon: Double): Locationforecast? {
         //complete?lat=-16.516667&lon=-68.166667&altitude=4150
         // ^eksempel med complete og altitude inkludert
         val path = "https://in2000-apiproxy.ifi.uio.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}"
@@ -26,10 +26,10 @@ class LocationforecastDS {
     suspend fun getCompactTimeseriesData(lat: Double, lon: Double): CompactTimeSeriesData? {
         val data = getAllForecastData(lat, lon) ?: return null
 
-        return createCompactData(data.properties.timeseries[0], data.properties.meta.units)
+        return createCompactData(data.properties.timeseries[0], data.properties.meta.units) as CompactTimeSeriesData
     }
 
-    private fun createCompactData(timeSeries: Timeseries, units: Units): CompactTimeSeriesData {
+     fun createCompactData(timeSeries: Timeseries, units: Units): CompactTimeSeriesData {
         val data = timeSeries.data
         val instant = data.instant
         val instantDetails = instant.details
@@ -49,7 +49,7 @@ class LocationforecastDS {
     }
 
     //henter data fra url med Fuel
-    private suspend fun fetchData(url: String): String?{
+    suspend fun fetchData(url: String): String?{
         return try {
             // `$ curl --user-agent 'gruppenavn'`
             val request = Fuel.get(url).header(Headers.USER_AGENT, "Gruppe 4")
