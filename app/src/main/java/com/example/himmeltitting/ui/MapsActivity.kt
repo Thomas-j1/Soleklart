@@ -1,4 +1,4 @@
-package com.example.himmeltitting
+package com.example.himmeltitting.ui
 
 import android.Manifest
 import android.content.Intent
@@ -14,12 +14,12 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.himmeltitting.R
 import com.example.himmeltitting.databinding.ActivityMapsBinding
 import com.example.himmeltitting.main_data_source.ObservationAdapter
 import com.example.himmeltitting.nav_fragments.FavoritesFragment
 import com.example.himmeltitting.nav_fragments.InfoFragment
 import com.example.himmeltitting.nav_fragments.SettingsFragment
-import com.example.himmeltitting.ui.MainActivityViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
