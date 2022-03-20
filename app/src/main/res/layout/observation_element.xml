@@ -31,13 +31,14 @@
             <LinearLayout
                 android:id="@+id/temperature_item"
                 android:layout_width="81dp"
-                android:layout_height="84dp"
+                android:layout_height="100dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="50dp"
                 android:orientation="vertical"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintStart_toEndOf="@+id/cloud_cover_item"
-                card_view:layout_constraintTop_toTopOf="parent">
+                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintVertical_bias="0.25">
 
                 <ImageView
                     android:id="@+id/icon"
@@ -64,13 +65,14 @@
             <LinearLayout
                 android:id="@+id/cloud_cover_item"
                 android:layout_width="81dp"
-                android:layout_height="84dp"
+                android:layout_height="100dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="50dp"
                 android:orientation="vertical"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintStart_toStartOf="parent"
-                card_view:layout_constraintTop_toTopOf="parent">
+                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintVertical_bias="0.25">
 
                 <ImageView
                     android:id="@+id/cloud_icon"
@@ -98,8 +100,7 @@
             <LinearLayout
                 android:id="@+id/wind_item"
                 android:layout_width="81dp"
-                android:layout_height="84dp"
-                android:layout_marginStart="0dp"
+                android:layout_height="100dp"
                 android:orientation="vertical"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintEnd_toEndOf="parent"
@@ -133,7 +134,7 @@
             <LinearLayout
                 android:id="@+id/air_item"
                 android:layout_width="81dp"
-                android:layout_height="84dp"
+                android:layout_height="100dp"
                 android:orientation="vertical"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintStart_toEndOf="@+id/sunset_item"
@@ -165,8 +166,8 @@
             <LinearLayout
                 android:id="@+id/sunset_item"
                 android:layout_width="81dp"
-                android:layout_height="84dp"
-                android:layout_marginBottom="50dp"
+                android:layout_height="100dp"
+                android:layout_marginBottom="40dp"
                 android:orientation="vertical"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintStart_toEndOf="@+id/temperature_item">

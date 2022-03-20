@@ -33,7 +33,7 @@ class SunRiseDataSource {
     }
 
     suspend fun getCompactSunriseData (latitude: Double, longitude: Double): CompactSunriseData? {
-        val date = "2022-03-08"
+        val date = "2022-03-20"
         val time = "14:00"
         val days = 1
         val height = 0.2
