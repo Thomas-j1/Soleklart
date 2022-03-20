@@ -19,7 +19,7 @@ class MainDataSource {
         observations = mutableListOf()
 
         val locationForecastData =
-            latitude?.let {
+            latitude.let {
                 locationforecastDS.getCompactTimeseriesData(it, longitude)
             } as CompactTimeSeriesData
 
@@ -30,14 +30,17 @@ class MainDataSource {
 
         val niluData = niluDS.fetchNilusMedRadius(latitude, longitude, radius)
 
-        val sunriseData = latitude?.let {
+        val sunriseData = latitude.let {
             sunriseDS.getCompactSunriseData(it, longitude)
         } as CompactSunriseData
 
         val temperature =  locationForecastData.temperature
         val cloudCover = locationForecastData.cloudCover
         val windSpeed = locationForecastData.wind_speed
+
         val airQuality = niluData?.get(0)?.value
+
+
         val sunsetTime = sunriseData.sunsetTime
 
         val observation = Observation(temperature, cloudCover,  windSpeed, airQuality.toString(), sunsetTime.toString());

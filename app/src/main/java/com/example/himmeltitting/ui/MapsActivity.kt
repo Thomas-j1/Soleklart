@@ -127,12 +127,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 lastLocation = location
                 currentLatLng = LatLng(location.latitude, location.longitude)
 
-                // egendefinert metode
-                //placeMarkerOnMap(currentLatLng)
 
                 // zoom effekt som skjer når lokasjon blir funnet
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
-                mainViewModel.loadObservations(currentLatLng.latitude, currentLatLng.longitude, 10)
+                mainViewModel.loadObservations(currentLatLng.latitude, currentLatLng.longitude, 50)
             }
         }
     }
@@ -185,12 +183,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 }
                 // from our list a first position.
                 val address: Address = addressList!![0]
+
                 // where we will add our locations latitude and longitude.
                 val latLng = LatLng(address.latitude, address.longitude)
                 currentLatLng = latLng
-                // adding marker to that position.
+
+               //adding marker to that position.
                 placeMarkerOnMap(latLng)
-                //  animate camera to that position.
+
+                // below line is to animate camera to that position.
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
                 return false
             }
@@ -213,6 +214,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private fun createData(){
         mainViewModel.getObservations().observe(this){ observationList ->
             recyclerView.adapter = observationList?.let{ ObservationAdapter(this,it) }
+
         }
     }
 
@@ -235,7 +237,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         calendar.set(Calendar.MONTH, month)
         calendar.set(Calendar.YEAR, year)
 
-        // må bestemme oss for API level, da skal vi slippe slike checks
         val viewFormatter = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             SimpleDateFormat("dd-MMM-YYYY")
         } else {
