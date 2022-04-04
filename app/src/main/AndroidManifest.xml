@@ -2,14 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.himmeltitting">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- dette er permissions for google maps-->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- dette er permissions for google maps -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,8 +14,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HimmelTitting">
-
-
+        <activity
+            android:name=".splash.SplashScreenActivity"
+            android:exported="false" />
+/>
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
@@ -30,11 +29,11 @@
              project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
              "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
         -->
-
-        <!-- jeg har ikke (ikke enda) lagt inn api key som egen variabelen slik som beskrever-->
+        <!-- jeg har ikke (ikke enda) lagt inn api key som egen variabelen slik som beskrever -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC_v9GJb-unOkJ9q24IytrdWEpSDoHFjac" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
