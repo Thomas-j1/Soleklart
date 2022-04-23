@@ -11,9 +11,10 @@ import com.example.himmeltitting.utils.airQualityImageCalculator
 import com.example.himmeltitting.utils.cloudImageCalculator
 
 
-class DataOutputAdapter(private val dataSet: List<OutputData>, private val context: Context) :
+class DataOutputAdapter(private val dataSet: List<OutputData>) :
     RecyclerView.Adapter<DataOutputAdapter.ViewHolder>()  {
 
+    private lateinit var context: Context
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
@@ -33,7 +34,8 @@ class DataOutputAdapter(private val dataSet: List<OutputData>, private val conte
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
-        val binding = DataoutputItemBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
+        val binding = DataoutputItemBinding.inflate(LayoutInflater.from(viewGroup.context.applicationContext), viewGroup, false)
+        context = viewGroup.context.applicationContext
         return ViewHolder(binding)
     }
 
@@ -52,18 +54,18 @@ class DataOutputAdapter(private val dataSet: List<OutputData>, private val conte
         viewHolder.airText.text = airQualityValue
 
         val airDrawableString = airQualityImageCalculator(airQualityValue)
-        viewHolder.airImage.setImageDrawable(getImageDrawable(context, airDrawableString))
+        viewHolder.airImage.setImageDrawable(getImageDrawable(airDrawableString))
 
 
         val cloudDrawableString = cloudImageCalculator(cloudCoverValue)
-        viewHolder.cloudImage.setImageDrawable(getImageDrawable(context, cloudDrawableString))
+        viewHolder.cloudImage.setImageDrawable(getImageDrawable(cloudDrawableString))
 
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = dataSet.size
 
-    private fun getImageDrawable(context: Context, imageString: String): Drawable? {
+    private fun getImageDrawable(imageString: String): Drawable? {
         val imageId = context.resources.getIdentifier(imageString, "drawable", context.packageName)
         return AppCompatResources.getDrawable(context, imageId)
     }

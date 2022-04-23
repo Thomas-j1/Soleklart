@@ -59,7 +59,7 @@ class BottomSheetFragment : Fragment() {
     private fun showData() {
         viewModel.outData.observe(viewLifecycleOwner) {
             setBottomSheetVisibility(true)
-            binding.recyclerView.adapter = DataOutputAdapter(it, this.requireContext())
+            binding.recyclerView.adapter = DataOutputAdapter(it)
             //binding.dataTextView.text = it
         }
     }
