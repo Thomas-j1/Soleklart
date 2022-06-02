@@ -114,16 +114,16 @@ class LocationforecastDS {
             instantDetails.cloud_area_fraction.toString() + " " + units.cloud_area_fraction
         val windSpeed = instantDetails.wind_speed.toString() + " " + units.wind_speed
         //val summary12Hours = hour12.summary.symbol_code
-        val summary6Hours = hour6.summary.symbol_code
-        val precipitation6Hours =
-            hour6.details.precipitation_amount.toString() + " " + units.precipitation_amount
+        //val summary6Hours = hour6.summary.symbol_code
+        val precipitationResult = hour6?.details?.precipitation_amount ?: 0.0
+        val precipitation6Hours = precipitationResult.toString() + " " + units.precipitation_amount
 
         return ForecastData(
             time,
             temperature,
             cloudCover,
             windSpeed,
-            summary6Hours,
+            //summary6Hours,
             precipitation6Hours
         )
 

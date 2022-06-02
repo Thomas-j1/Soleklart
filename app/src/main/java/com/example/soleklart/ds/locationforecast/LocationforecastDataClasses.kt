@@ -27,7 +27,7 @@ data class Data(
     val instant: Instant,
     val next_12_hours: Next_12_hours,
     val next_1_hours: Next_1_hours,
-    val next_6_hours: Next_6_hours
+    val next_6_hours: Next_6_hours?
 )
 
 data class Instant(val details: Details)
@@ -55,8 +55,7 @@ data class Summary(val symbol_code: String)
  */
 data class ForecastData(
     val time: String, val temperature: String, val cloudCover: String,
-    val wind_speed: String,
-    val summary6Hour: String, val precipitation6Hours: String
+    val wind_speed: String, val precipitation6Hours: String
 )
 
 
